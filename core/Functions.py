@@ -8,31 +8,22 @@ atc = Style.alterar_cor
 pause = Style.pause
 
 
-def AjustarLinkPageFlip(ODB):
+def AjustarLinkPageFlip(ODB=None):
     UPDATE = str(carregar_sql('sql/UPDATE-LINK-PAGEFLIP.sql'))
-    QUERY1 = ajustar_query(UPDATE, "{DB}", ODB)
-    QUERY1 = ajustar_query(QUERY1, "{pageflip}", LINKPAGE)
-    executar_query(Connection, QUERY1)
-    print(atc(
-        '\n Query executada com sucesso!, link do pageflip alterado',
-        "GREEN",
-        "SIM"
-    ))
-    pause()
+    QUERY = ajustar_query(UPDATE, "{DB}", ODB)
+    QUERY = ajustar_query(QUERY, "{pageflip}", LINKPAGE)
+    executar_query(Connection, QUERY)
 
+def AlterarStatusSessao(ODB=None):
+    UPDATE = str(carregar_sql('sql/UPDATE-SESSAO-STATUS.sql'))
+    QUERY = ajustar_query(UPDATE, "{DB}", ODB)
+    executar_query(Connection, QUERY)
 
-def AlterarSenhasVotacao(ODB):
+def AlterarSenhasVotacao(ODB=None):
     UPDATE = str(carregar_sql('sql/UPDATE-SENHA-POLITICOS.sql'))
     QUERY2 = ajustar_query(UPDATE, "{DB}", ODB)
     QUERY2 = ajustar_query(QUERY2, "{senhacriptografada}", SENHAVT)
     executar_query(Connection, QUERY2)
-    print(atc(
-        '\n Query executada com sucesso!, senhas setadas como "123"',
-        "GREEN",
-        "SIM"
-    ))
-    pause()
-
 
 def ClonarTabela(BANCO_ORIGEM, BANCO_DESTINO, NOME_TABELA):
     query = str(carregar_sql('sql/CLONE-TABLE.SQL'))
@@ -40,7 +31,6 @@ def ClonarTabela(BANCO_ORIGEM, BANCO_DESTINO, NOME_TABELA):
     query = ajustar_query(query,"{BANCO_DESTINO}", BANCO_DESTINO)
     query = ajustar_query(query,"{NOME_TABELA}", NOME_TABELA)
     executar_query(Connection, query)
-
     print(atc(f'\n Sucesso!, a tabela "{NOME_TABELA}" foi clonada no banco "{BANCO_DESTINO}"',"GREEN","SIM"))
     pause()
 

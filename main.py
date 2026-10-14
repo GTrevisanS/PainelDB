@@ -1,4 +1,4 @@
-from core.Functions import AlterarSenhasVotacao, AjustarLinkPageFlip, ClonarBanco, ClonarTabela, GerarDump
+from core.Functions import AlterarSenhasVotacao, AjustarLinkPageFlip, AlterarStatusSessao, ClonarBanco, ClonarTabela, GerarDump
 from core.Validations import banco_nao_existe, bancos_iguais, bancos_nao_digitados, tabela_nao_existe, pasta_invalida, NaoTemPermissoes
 from core.Config import Connection
 import Style
@@ -10,24 +10,86 @@ pause = Style.pause
 alert = Style.alert
 cls = Style.cls
 
-def REDEFINIR_SENHA_VOTACAO():
-    while True:
-        DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
-        if banco_nao_existe(DB):
-            painel()
-        else:
-            AlterarSenhasVotacao(DB)
-            break
+def ALTERAR_STATUS_SESSAO(ODB=None):
+    if not ODB:
+        while True:
+            DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
+            if banco_nao_existe(DB):
+                painel()
+            else:
+                AlterarStatusSessao(DB)
+                print(atc('\n Query executada com sucesso!, Status da sessão alterado!',"GREEN","SIM"))
+                pause()
+                break
+    else:
+        AlterarStatusSessao(ODB)
+
+def REDEFINIR_SENHA_VOTACAO(ODB=None):
+    if not ODB:
+        while True:
+            DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
+            if banco_nao_existe(DB):
+                painel()
+            else:
+                AlterarSenhasVotacao(DB)
+                print(atc('\n Query executada com sucesso!, "Senhas alteradas para 123"!',"GREEN","SIM"))
+                pause()
+                break
+    else:
+        AlterarSenhasVotacao(ODB)
 
 
-def RESETAR_PAGEFLIP():
+def RESETAR_PAGEFLIP(ODB=None):
+    if not ODB:
+        while True:
+            DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
+            if banco_nao_existe(str(DB)):
+                painel()
+            else:
+                AjustarLinkPageFlip(DB)
+                print(atc('\n Query executada com sucesso!, "Senhas alteradas para 123"!',"GREEN","SIM"))
+                pause()
+                break
+    else:
+        AjustarLinkPageFlip(ODB)
+
+
+def PAINEL_VOTACAO(servidor):
     while True:
-        DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
-        if banco_nao_existe(str(DB)):
-            painel()
-        else:
-            AjustarLinkPageFlip(DB)
-            break
+        cls()
+        print(atc("", "CYAN", "SIM"))
+        print()
+        print(centraliza(" PAINEL VOTAÇÃO (DEFINA OQUE DESEJA) ", "="))
+        print()
+        print(atc("", "CYAN", "SIM"))
+        print(centraliza("Redefinir senhas dos vereadores       DIGITE...           [1]", " "))
+        print(centraliza("Redefinir Config PageFlip             DIGITE...           [2]", " "))
+        print(centraliza("Ajustar por completo para sessão      DIGITE...           [3]", " "))
+        print(atc("", "BLACK", "SIM"))
+        print(centraliza("Voltar ao painel                      DIGITE...           [X]", " "))
+        print(atc("", "CYAN", "SIM"))
+        print(centraliza(f" [{servidor}] ", "="))
+        print()
+        resposta = input("> ")
+        match str(resposta).strip().lower():
+            case "1":
+                REDEFINIR_SENHA_VOTACAO()
+            case "2":
+                RESETAR_PAGEFLIP()
+            case "3":
+                ODB = input(atc("\n Digite o nome do banco: ", "YELLOW", "SIM"))
+                if banco_nao_existe(str(ODB)):
+                    pass
+                else:
+                    REDEFINIR_SENHA_VOTACAO(ODB)
+                    RESETAR_PAGEFLIP(ODB)
+                    ALTERAR_STATUS_SESSAO(ODB)
+                    print(atc('\n Todas as queries foram executadas com sucesso!, a sessão esta pronta para teste.',"GREEN","SIM"))
+                    pause()
+            case "x":
+                break
+            case _:
+                pass
 
 
 def CLONAR_DB():
@@ -139,8 +201,7 @@ def painel(servidor=str(Connection["host"])):
         print(centraliza("Clonar uma tabela de outro banco         DIGITE...           [2]", " "))
         print(atc(centraliza("Gerar um arquivo dump de um banco        DIGITE...           [3]", " "), "BLACK", "SIM"))
         print(atc("", "YELLOW", "NAO"))
-        print(centraliza("[Votação] Redefinir Senhas politicos     DIGITE...           [4]", " "))
-        print(centraliza("[Votação] Redefinir Config PageFlip      DIGITE...           [5]", " "))
+        print(centraliza("Acessar painel Votação                   DIGITE...           [4]", " "))
         print(atc("", "BLUE", "SIM"))
         print()
         print(centraliza(f" [{servidor}] ", "="))
@@ -154,9 +215,9 @@ def painel(servidor=str(Connection["host"])):
             case "3":
                 GERAR_ARQUIVO_DUMP()
             case "4":
-                REDEFINIR_SENHA_VOTACAO()
-            case "5":
-                RESETAR_PAGEFLIP()
+                PAINEL_VOTACAO(servidor=str(Connection["host"]))
+            case _:
+                pass
 painel()
 
 
