@@ -122,6 +122,12 @@ def bancos_nao_digitados(DB1, DB2):
         return True
     return False
 
+def banco_nao_digitado(DB):
+    if not DB:
+        alert(' Você precisa informar o nome banco!')
+        return True
+    return False
+
 
 def pasta_invalida(PASTA):
     if not PASTA:

@@ -1,5 +1,5 @@
 from core.Functions import AlterarSenhasVotacao, AjustarLinkPageFlip, AlterarStatusSessao, ClonarBanco, ClonarTabela, GerarDump
-from core.Validations import banco_nao_existe, bancos_iguais, bancos_nao_digitados, tabela_nao_existe, pasta_invalida, NaoTemPermissoes
+from core.Validations import banco_nao_existe, bancos_iguais, bancos_nao_digitados, banco_nao_digitado, tabela_nao_existe, pasta_invalida, NaoTemPermissoes
 from core.Config import Connection
 import Style
 
@@ -14,11 +14,13 @@ def ALTERAR_STATUS_SESSAO(ODB=None):
     if not ODB:
         while True:
             DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
+            if banco_nao_digitado(DB):
+                break
             if banco_nao_existe(DB):
-                painel()
+                break
             else:
                 AlterarStatusSessao(DB)
-                print(atc('\n Query executada com sucesso!, Status da sessão alterado!',"GREEN","SIM"))
+                print(atc('\n Query executada com sucesso!, status da sessão alterado!',"GREEN","SIM"))
                 pause()
                 break
     else:
@@ -28,8 +30,10 @@ def REDEFINIR_SENHA_VOTACAO(ODB=None):
     if not ODB:
         while True:
             DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
+            if banco_nao_digitado(DB):
+                break
             if banco_nao_existe(DB):
-                painel()
+                break
             else:
                 AlterarSenhasVotacao(DB)
                 print(atc('\n Query executada com sucesso!, "Senhas alteradas para 123"!',"GREEN","SIM"))
@@ -43,8 +47,10 @@ def RESETAR_PAGEFLIP(ODB=None):
     if not ODB:
         while True:
             DB = input(atc("\n Informe o nome do banco: ", "YELLOW", "SIM"))
+            if banco_nao_digitado(DB):
+                break
             if banco_nao_existe(str(DB)):
-                painel()
+                break
             else:
                 AjustarLinkPageFlip(DB)
                 print(atc('\n Query executada com sucesso!, "Senhas alteradas para 123"!',"GREEN","SIM"))
@@ -63,7 +69,9 @@ def PAINEL_VOTACAO(servidor):
         print(atc("", "CYAN", "SIM"))
         print(centraliza("Redefinir senhas dos vereadores       DIGITE...           [1]", " "))
         print(centraliza("Redefinir Config PageFlip             DIGITE...           [2]", " "))
-        print(atc(centraliza("Ajustar por completo para sessão      DIGITE...           [3]", " "), "CYAN", 'NAO'))
+        print(centraliza("Alterar status da sessão              DIGITE...           [3]", " "))
+        print(atc('',"CYAN", 'NAO'))
+        print(atc(centraliza("Ajustar por completo para sessão      DIGITE...           [4]", " "), "CYAN", 'NAO'))
         print(atc("", "BLACK", "SIM"))
         print(centraliza("Voltar ao painel                      DIGITE...           [X]", " "))
         print(atc("", "CYAN", "SIM"))
@@ -76,6 +84,8 @@ def PAINEL_VOTACAO(servidor):
             case "2":
                 RESETAR_PAGEFLIP()
             case "3":
+                ALTERAR_STATUS_SESSAO()
+            case "4":
                 ODB = input(atc("\n Digite o nome do banco: ", "YELLOW", "SIM"))
                 if banco_nao_existe(str(ODB)):
                     pass
