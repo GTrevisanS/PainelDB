@@ -86,13 +86,15 @@ def PAINEL_VOTACAO(servidor):
             case "3":
                 ALTERAR_STATUS_SESSAO()
             case "4":
-                ODB = input(atc("\n Digite o nome do banco: ", "YELLOW", "SIM"))
-                if banco_nao_existe(str(ODB)):
+                DB = input(atc("\n Digite o nome do banco: ", "YELLOW", "SIM"))
+                if banco_nao_digitado(DB):
+                    pass
+                elif banco_nao_existe(str(DB)):
                     pass
                 else:
-                    REDEFINIR_SENHA_VOTACAO(ODB)
-                    RESETAR_PAGEFLIP(ODB)
-                    ALTERAR_STATUS_SESSAO(ODB)
+                    REDEFINIR_SENHA_VOTACAO(DB)
+                    RESETAR_PAGEFLIP(DB)
+                    ALTERAR_STATUS_SESSAO(DB)
                     print(atc('',"GREEN","SIM"))
                     print(" Todas as queries foram executadas com sucesso!\n")
                     print(atc(' [1] - Senhas redefinidas.',"GREEN","NAO"))
@@ -184,21 +186,21 @@ def GERAR_ARQUIVO_DUMP():
         print(centraliza(" local que deseja gerar o dump", " "))
         # print(centraliza(" já existir, ela será deletada e depois recriada) ", " "))
         print("\n")
-        BANCO = input(atc(" Nome do banco [DUMP]: ", "BLUE", "SIM")).strip().lower()
+        DB = input(atc(" Nome do banco [DUMP]: ", "BLUE", "SIM")).strip().lower()
         # print("")
         PASTA = input(atc(" Caminho da pasta: ", "YELLOW", "SIM")).strip().lower()
-        if bancos_nao_digitados(BANCO, 1):
+        if banco_nao_digitado(DB):
             painel()
         elif pasta_invalida(PASTA):
             painel()
-        elif banco_nao_existe(BANCO):
+        elif banco_nao_existe(DB):
             painel()
         elif NaoTemPermissoes(['SELECT','SHOW VIEW','TRIGGER','EVENT']):
             painel()
         else:
             print()
             loading(" Iniciando geração do arquivo dump na pasta")
-            GerarDump(BANCO, PASTA)
+            GerarDump(DB, PASTA)
             break
 
 
@@ -215,12 +217,16 @@ def painel(servidor=str(Connection["host"])):
         print(atc(centraliza("Gerar um arquivo dump de um banco        DIGITE...           [3]", " "), "BLACK", "SIM"))
         print(atc("", "YELLOW", "NAO"))
         print(centraliza("Acessar painel Votação                   DIGITE...           [4]", " "))
+        print(atc("", "BLACK", "SIM"))
+        print(centraliza("Fechar painel                            DIGITE...           [X]", " "))
         print(atc("", "BLUE", "SIM"))
         print()
         print(centraliza(f" [{servidor}] ", "="))
         print()
         resposta = input("> ")
         match str(resposta).strip().lower():
+            case "x":
+                break
             case "1":
                 CLONAR_DB()
             case "2":
@@ -231,6 +237,8 @@ def painel(servidor=str(Connection["host"])):
                 PAINEL_VOTACAO(servidor=str(Connection["host"]))
             case _:
                 pass
+
+
 painel()
 
 
